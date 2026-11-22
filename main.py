@@ -15,7 +15,7 @@ Stories (all reported on 22 November 2026):
      casualties were immediately reported.
   2. COP31 climate talks are deadlocked over fossil fuels.
   3. Trump touts a 'momentous' summit with Xi and Putin at APEC in
-     Shenzhen; Vance refuses to back the Iran strikes in public.
+     Shenzhen; Vance won't back the Iran strikes in public.
   4. Drones hit a Russian cargo ship in the Baltic; Finland tightens
      security; Russia hits Ukraine with 400 drones and 110 missiles.
   5. Estonia moves to close its border with Russia; Moscow decries a
@@ -272,10 +272,12 @@ def icon_globe_cross(cv, x, y, s, color):
 def icon_flags(cv, x, y, s, color):
     """Three small flags on poles for the summit."""
     cols = [RED, GOLD, BLUE]
+    fw = max(8, s // 5)              # flag width scales with the box
+    step = (s - 4 - fw) // 2         # pole spacing; last flag ends at x+s
     for k in range(3):
-        px = x + 6 + k * (s - 12) // 2
+        px = x + 4 + k * step
         cv.vline(px, y + 8, s - 12, color)
-        cv.rect(px, y + 2, 12, 8, cols[k])
+        cv.rect(px, y + 2, fw, 8, cols[k])
         cv.disc(px, y + s - 4, 2, color)
 
 
@@ -327,11 +329,11 @@ CARDS = [
     ("CLIMATE", BLUE, icon_globe_cross,
      "COP31 DEADLOCK ON FOSSIL FUELS",
      "Climate talks stall as the fight over fossil fuels leaves the "
-     "draft deal deadlocked. Negotiators push for a breakthrough."),
+     "deal deadlocked. Negotiators push for a breakthrough."),
     ("SUMMIT", GOLD, icon_flags,
      "TRUMP TOUTS XI-PUTIN SUMMIT",
-     "Trump calls the Shenzhen APEC meeting 'momentous'. Vance refuses "
-     "to back the Iran strikes in public."),
+     "Trump calls the Shenzhen APEC meeting 'momentous'. Vance won't "
+     "back the Iran strikes in public."),
     ("BALTIC", STEEL, icon_ship_drone,
      "DRONES HIT RUSSIAN CARGO SHIP",
      "Drones strike a Russian cargo ship in the Baltic. Finland "
@@ -401,18 +403,20 @@ def draw():
         y = gy + row * (ch + vgap)
         cv.rect(x, y, cw, ch, PAPER)
         cv.rect(x, y, cw, 3, color)
-        cv.text(tag, x + 14, y + 11, 1, color)
+        cv.text(tag, x + 14, y + 11, 2, color)
         head_lines = cv.wrap(head, cw - 28 - 52, 2)
         hy = y + 30
         for ln in head_lines[:1]:
             cv.text(ln, x + 14, hy, 2, INK)
             hy += 21
-        body_lines = cv.wrap(body, cw - 28, 1)
+        # Body text stops 10px short of the icon zone (icon left edge
+        # at cw-62), so no line can run into an icon.
+        body_lines = cv.wrap(body, 380, 1)
         by = y + 58
         for ln in body_lines[:4]:
             cv.text(ln, x + 14, by, 1, INK)
             by += 11
-        icon(cv, x + cw - 56, y + 18, 44, color)
+        icon(cv, x + cw - 62, y + 18, 55, color)
 
     # -------------------------------------------------------- mini stories --
     my, mh = 866, 62
